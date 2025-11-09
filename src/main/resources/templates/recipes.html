@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Recetas</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+    <h1>Todas las recetas</h1>
+    <a href="/">Home</a> | <a href="/login">Login</a> | <a href="/recipes/search">Buscar Receta</a>
+    <div>
+        <ul>
+            <li th:each="r : ${recipes}">
+                <a th:href="@{'/recipes/' + ${r.id}}" th:text="${r.name}">Receta</a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

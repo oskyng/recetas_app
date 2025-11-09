@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar Recetas</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Buscar Recetas</h1>
+<a href="/">Home</a>
+
+<form action="/recipes/results" method="get">
+    <label>Nombre:</label>
+    <input type="text" name="name"><br/>
+
+    <label>Tipo de cocina:</label>
+    <input type="text" name="cuisine"><br/>
+
+    <label>Ingredientes:</label>
+    <input type="text" name="ingredients"><br/>
+
+    <label>Pais de origen:</label>
+    <input type="text" name="country"><br/>
+
+    <label>Dificultad:</label>
+    <input type="text" name="difficulty"><br/>
+
+    <button type="submit">Buscar</button>
+</form>
+</body>
+</html>

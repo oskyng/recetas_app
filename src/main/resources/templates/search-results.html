@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<h1>Search Results</h1>
+<a href="/recipes/search">Volver</a> | <a href="/">Home</a>
+
+<div th:if="${#lists.isEmpty(recipes)}">
+    <p>No recipes found.</p>
+</div>
+
+<ul th:if="${!#lists.isEmpty(recipes)}">
+    <li th:each="r : ${recipes}">
+        <strong th:text="${r.name}"></strong> -
+        <em th:text="${r.cuisineType}"></em>
+        (<span th:text="${r.countryOfOrigin}"></span>)<br/>
+        Difficulty: <span th:text="${r.difficulty}"></span><br/>
+        Ingredients: <span th:text="${r.ingredients}"></span><br/><br/>
+    </li>
+</ul>
+</body>
+</html>

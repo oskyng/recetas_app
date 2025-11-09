@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Seguridad y Calidad - Duoc UC</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>Bienvenido a Seguridad y Calidad en el Desarrollo de Software</h1>
+  <h1>Recetas recientes</h1>
+  <a href="/login">Login</a> | <a href="/recipes">Recetas</a>
+  <div>
+      <ul>
+          <li th:each="r : ${recipes}">
+              <a th:href="@{'/recipes/' + ${r.id}}" th:text="${r.name}">Recipe</a> - <span th:text="${r.cuisineType}">cuisine</span>
+          </li>
+      </ul>
+  </div>
+</body>
+</html>
