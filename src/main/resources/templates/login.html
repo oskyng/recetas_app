@@ -16,7 +16,7 @@
     </form>
     <div id="message"></div>
 
-    <script>
+    <script th:attr="nonce=${cspNonce}">
         async function doLogin(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
