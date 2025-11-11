@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  # Base de datos MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: recipes_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: recipes_app
+      MYSQL_ROOT_PASSWORD:
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - recipes_net
+
+  # Aplicación Spring Boot (backend + frontend Thymeleaf)
+  app:
+    build: .
+    image: recipes_app:latest
+    container_name: recipes_app
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/recipes_app?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD:
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SERVLET_CONTEXT_PATH: /recetas
+      SERVER_PORT: 8081
+      JWT_SECRET: "3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b"
+    ports:
+      - "8081:8081"
+    networks:
+      - recipes_net
+
+volumes:
+  mysql_data:
+
+networks:
+  recipes_net:
