@@ -14,5 +14,177 @@
     <p th:text="${recipe.ingredients}"></p>
     <h3>Instructions</h3>
     <p th:text="${recipe.instructions}"></p>
+
+    <hr/>
+    <h2>Fotos y videos</h2>
+    <div id="mediaContainer">
+
+    </div>
+
+    <h3>Agregar foto o video (requiere login JWT)</h3>
+    <form id="mediaForm" onsubmit="return addMedia(event)">
+        <label>URL:</label><br/>
+        <input type="text" id="mediaUrl" required/><br/>
+        <label>Tipo:</label><br/>
+        <select id="mediaType">
+            <option value="IMAGE">Imagen</option>
+            <option value="VIDEO">Video</option>
+        </select><br/><br/>
+        <button type="submit">Agregar</button>
+    </form>
+    <div id="mediaMessage"></div>
+
+    <hr/>
+    <h2>Comentarios</h2>
+    <div id="averageRating"></div>
+    <div id="commentsContainer">
+
+    </div>
+
+    <h3>Agregar comentario (requiere login JWT)</h3>
+    <form id="commentForm" onsubmit="return addComment(event)">
+        <label>Comentario:</label><br/>
+        <textarea id="commentText" rows="3" cols="40" required></textarea><br/>
+        <label>Valoración (1 a 5):</label><br/>
+        <input type="number" id="commentRating" min="1" max="5" value="5" required/><br/><br/>
+        <button type="submit">Enviar</button>
+    </form>
+    <div id="commentMessage"></div>
+
+    <hr/>
+    <h2>Compartir esta receta</h2>
+    <button onclick="shareRecipe()">Compartir (requiere login JWT)</button>
+    <div id="shareResult"></div>
+
+    <script th:inline="javascript">
+        const recipeId = /*[[${recipe.id}]]*/ 0;
+
+        async function loadMedia() {
+            const resp = await fetch('/api/recipes/' + recipeId + '/media', {
+                headers: buildAuthHeaders(false)
+            });
+            if (!resp.ok) return;
+            const data = await resp.json();
+            const container = document.getElementById('mediaContainer');
+            container.innerHTML = '';
+            data.forEach(m => {
+                if (m.type === 'IMAGE') {
+                    const img = document.createElement('img');
+                    img.src = m.url;
+                    img.style.maxWidth = '200px';
+                    img.style.display = 'block';
+                    img.style.marginBottom = '10px';
+                    container.appendChild(img);
+                } else if (m.type === 'VIDEO') {
+                    const video = document.createElement('video');
+                    video.src = m.url;
+                    video.controls = true;
+                    video.style.maxWidth = '300px';
+                    video.style.display = 'block';
+                    video.style.marginBottom = '10px';
+                    container.appendChild(video);
+                }
+            });
+        }
+
+        async function loadComments() {
+            const resp = await fetch('/api/recipes/' + recipeId + '/comments', {
+                headers: buildAuthHeaders(false)
+            });
+            if (!resp.ok) return;
+            const data = await resp.json();
+            const container = document.getElementById('commentsContainer');
+            const avgDiv = document.getElementById('averageRating');
+
+            container.innerHTML = '';
+            avgDiv.innerText = 'Valoración promedio: ' +
+                (data.averageRating ? data.averageRating.toFixed(2) : 'N/A');
+
+            data.items.forEach(c => {
+                const div = document.createElement('div');
+                div.style.borderBottom = '1px solid #ccc';
+                div.style.marginBottom = '8px';
+                div.innerHTML = '<strong>' + c.username + '</strong> (' + c.rating +
+                    '/5) <br/>' + c.text;
+                container.appendChild(div);
+            });
+        }
+
+        function buildAuthHeaders(requireAuth = true) {
+            const token = localStorage.getItem('jwtToken');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            } else if (requireAuth) {
+                alert('Debes iniciar sesión para realizar esta acción');
+            }
+            return headers;
+        }
+
+        async function addMedia(e) {
+            e.preventDefault();
+            const url = document.getElementById('mediaUrl').value;
+            const type = document.getElementById('mediaType').value;
+            const msg = document.getElementById('mediaMessage');
+
+            const resp = await fetch('/api/recipes/' + recipeId + '/media', {
+                method: 'POST',
+                headers: buildAuthHeaders(true),
+                body: JSON.stringify({ url, type })
+            });
+
+            if (resp.ok) {
+                msg.innerText = 'Media agregada correctamente';
+                document.getElementById('mediaForm').reset();
+                loadMedia();
+            } else {
+                msg.innerText = 'Error al agregar media (¿token válido?)';
+            }
+            return false;
+        }
+
+        async function addComment(e) {
+            e.preventDefault();
+            const text = document.getElementById('commentText').value;
+            const rating = parseInt(document.getElementById('commentRating').value, 10);
+            const msg = document.getElementById('commentMessage');
+
+            const resp = await fetch('/api/recipes/' + recipeId + '/comments', {
+                method: 'POST',
+                headers: buildAuthHeaders(true),
+                body: JSON.stringify({ text, rating })
+            });
+
+            if (resp.ok) {
+                msg.innerText = 'Comentario enviado';
+                document.getElementById('commentForm').reset();
+                loadComments();
+            } else {
+                msg.innerText = 'Error al enviar comentario (¿token válido?)';
+            }
+            return false;
+        }
+
+        async function shareRecipe() {
+            const resultDiv = document.getElementById('shareResult');
+            const resp = await fetch('/api/recipes/' + recipeId + '/share', {
+                method: 'POST',
+                headers: buildAuthHeaders(true)
+            });
+
+            if (resp.ok) {
+                const data = await resp.json();
+                resultDiv.innerHTML =
+                    '<p>' + data.message + '</p>' +
+                    '<p>URL del sitio: <a href="' + data.shareUrl + '">' + data.shareUrl + '</a></p>';
+            } else {
+                resultDiv.innerText = 'Error al compartir la receta (¿token válido?)';
+            }
+        }
+
+        // Cargar media y comentarios al abrir la página
+        loadMedia();
+        loadComments();
+    </script>
 </body>
 </html>
