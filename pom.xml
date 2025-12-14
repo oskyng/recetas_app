@@ -20,6 +20,9 @@
 
   <properties>
     <java.version>17</java.version>
+    <sonar.projectKey>seguridad-test</sonar.projectKey>
+    <sonar.projectName>seguridad-test</sonar.projectName>
+    <sonar.host.url>http://localhost:9000</sonar.host.url>
   </properties>
 
   <dependencies>
@@ -148,6 +151,12 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>9.0.9</version>
+      </plugin>
+
     </plugins>
   </build>
 
