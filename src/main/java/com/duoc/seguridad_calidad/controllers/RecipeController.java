@@ -27,7 +27,8 @@ public class RecipeController {
         return "recipes";
     }
 
-    @GetMapping
+    // Endpoint separado para devolver JSON y evitar conflicto con la vista
+    @GetMapping("/json")
     public ResponseEntity<List<Recipe>> getAll(Authentication authentication) {
         return ResponseEntity.ok(recipeRepository.findAll());
     }
