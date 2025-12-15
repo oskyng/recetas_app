@@ -1,5 +1,6 @@
 package com.duoc.seguridad_calidad;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -10,5 +11,10 @@ class SeguridadCalidadApplicationTests {
 
     @Test
     void contextLoads() {
+    }
+
+    @Test
+    void applicationStartsWithoutErrors() {
+        Assertions.assertDoesNotThrow(() -> SeguridadCalidadApplication.main(new String[]{}));
     }
 }

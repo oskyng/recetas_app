@@ -34,7 +34,7 @@ public class RecipeApiController {
     }
 
     @PostMapping("/{id}/media")
-    public ResponseEntity<?> addMedia(@PathVariable Long id,
+    public ResponseEntity<Object> addMedia(@PathVariable Long id,
                                       @RequestBody AddMediaRequest request,
                                       Authentication authentication) {
         Optional<Recipe> recipeOpt = mediaService.findRecipe(id);
@@ -57,7 +57,7 @@ public class RecipeApiController {
     }
 
     @GetMapping("/{id}/media")
-    public ResponseEntity<?> listMedia(@PathVariable Long id) {
+    public ResponseEntity<Object> listMedia(@PathVariable Long id) {
         Optional<Recipe> recipeOpt = mediaService.findRecipe(id);
         if (recipeOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -67,7 +67,7 @@ public class RecipeApiController {
     }
 
     @PostMapping("/{id}/share")
-    public ResponseEntity<?> share(@PathVariable Long id,
+    public ResponseEntity<Object> share(@PathVariable Long id,
                                    Authentication authentication) {
         Optional<Recipe> recipeOpt = mediaService.findRecipe(id);
         if (recipeOpt.isEmpty()) {
@@ -84,7 +84,7 @@ public class RecipeApiController {
     }
 
     @PostMapping("/{id}/comments")
-    public ResponseEntity<?> addComment(@PathVariable Long id, @RequestBody CommentRequest request, Authentication authentication) {
+    public ResponseEntity<Object> addComment(@PathVariable Long id, @RequestBody CommentRequest request, Authentication authentication) {
 
         if (request.getRating() < 1 || request.getRating() > 5) {
             return ResponseEntity.badRequest().body("Rating debe estar entre 1 y 5");
@@ -108,7 +108,7 @@ public class RecipeApiController {
     }
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<?> listComments(@PathVariable Long id) {
+    public ResponseEntity<Object> listComments(@PathVariable Long id) {
         Optional<Recipe> recipeOpt = commentService.findRecipe(id);
         if (recipeOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
